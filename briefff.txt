@@ -1,0 +1,704 @@
+📌 ✅ Summary: What Was Tried, What Worked, What Didn't
+✅ Project Context:
+Dataset: Google Analytics-based clickstream → predict purchaseValue.
+Submission format: id, purchaseValue → CSV.
+Goal: Balance good generalization (R² ≈ 0.4–0.7) with high Kaggle test score (≥ 0.60).
+
+✅ Version History & Learnings
+🔹 Version 1
+Raw preprocessing, Ridge + XGBoost, log-transformed target
+Result:
+R²: 0.93 😬 (overfit)
+Kaggle: ~0.02 🔻
+Mistake: Log-transforming target suppressed signal; model overfit due to no validation.
+
+🔹 Version 2
+✅ No log-transform
+✅ Strong preprocessing: imputation, outlier capping (pageviews, totalHits)
+✅ Frequency encoding
+✅ Early stopping in XGBoost
+✅ Stratified train/val split
+Result:
+R²: 0.47 (healthy)
+Kaggle: 0.225 ✅
+Insight: Best-performing setup so far. Good generalization. Balanced.
+
+🔹 Version 3
+✅ Added smart features: totalHits * pageviews, etc.
+❌ Stacked XGBoost + Ridge
+Result:
+R²: 0.41–0.45
+Kaggle: 0.188 🔻
+Mistake: Stacking hurt Kaggle generalization, even if validation R² stayed reasonable.
+RidgeCV added noise, not signal.
+
+❌ What Not To Do (EVER AGAIN For This Project)
+MistakeWhy It Fails
+❌ Log-transform target (log1p)
+Destroys correlation with real test target distribution
+❌ Use Ridge or stacking
+Ridge hurts performance; no gain from linear ensembling
+❌ Use default train-test split
+Without stratification, purchaseValue=0 dominates
+❌ Use LabelEncoder on high-card cat features
+Causes leakage & unseen category issues
+❌ Skip outlier capping
+Features like pageviews, totalHits explode the model
+❌ Tune with RandomSearch on CPU
+Causes timeout & memory failures in notebook
+
+✅ What Worked Well (KEEP DOING THIS)
+MethodWhy It Works
+✅ Use raw purchaseValue as target
+Reflects Kaggle eval directly
+✅ Cap outliers (at 100)
+Removes skew and over-penalization
+✅ Frequency encode categorical variables
+Handles unseen/test values safely
+✅ Stratified train/val split on (purchase > 0)
+Ensures balanced learnable target
+✅ Use early stopping in XGBoost
+Prevents overfit, stabilizes performance
+✅ Engineer meaningful features (interactions)
+Adds learnable patterns without complexity
+
+🧠 Prompt for Future AI / Model Builder
+You're working with clickstream data (Google Analytics) to predict purchaseValue.
+Previous experiments showed that:
+Stacking models (e.g. XGBoost + Ridge) reduces Kaggle performance.
+Log-transforming the target hurts performance.
+Early stopping with stratified splits, frequency-encoded categoricals, and outlier-capped features improves both R² and Kaggle score.
+🚫 Do NOT use:
+Ridge regression
+Log transforms
+Stacking
+LabelEncoder
+Default splits without stratification
+✅ Use:
+Frequency encoding
+Outlier capping for totalHits, pageviews (cap at 100)
+Interaction features like totalHits * pageviews
+Stratified train/val split on (purchase > 0)
+XGBoostRegressor with early stopping
+🎯 Goal: Keep R² between 0.4 and 0.6; maximize Kaggle public score > 0.30.
+
+✅ Final Milestones & Status Report
+txt
+CopyEdit
+[milestone] Version 1 - log-transform + Ridge/XGB = overfit (R²=0.93), Kaggle 0.02 ❌
+[milestone] Version 2 - raw target + smart preprocessing = R² 0.47, Kaggle 0.225 ✅
+[milestone] Version 3 - feature interactions + Ridge stacking = R² 0.41, Kaggle 0.188 ❌
+
+[confirmed strategies]
+- Use frequency encoding
+- Use raw target (no log)
+- Cap outliers at 100
+- Use early stopping
+- Use stratified splits on (purchase > 0)
+
+[avoid forever]
+- Stacking models
+- Ridge regression
+- Label encoding
+- Log-transforms of target       import pandas as pd
+import numpy as np
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.impute import SimpleImputer
+from sklearn.metrics import r2_score
+from xgboost import XGBRegressor
+from scipy.stats import uniform, randint
+
+# Load the data again
+train_data_path = '/kaggle/input/engage-2-value-from-clicks-to-conversions/train_data.csv'
+test_data_path = '/kaggle/input/engage-2-value-from-clicks-to-conversions/test_data.csv'
+
+train_df = pd.read_csv(train_data_path)
+test_df = pd.read_csv(test_data_path)
+
+# Replace missing markers with NaN in both train and test datasets
+missing_markers = ['Unknown', 'not available in demo dataset', '(not set)', '(not provided)']
+train_df.replace(missing_markers, np.nan, inplace=True)
+test_df.replace(missing_markers, np.nan, inplace=True)
+
+# Drop columns with more than 70% missing data
+threshold = 0.7
+missing_ratio = train_df.isna().mean()
+drop_cols = missing_ratio[missing_ratio >= threshold].index.tolist()
+n_uniq = [col for col in train_df.columns if train_df[col].nunique() == 1]
+train = train_df.drop(columns=n_uniq + drop_cols, errors='ignore')
+test = test_df.drop(columns=n_uniq + drop_cols, errors='ignore')
+
+# Impute missing values using median for numerical columns and most frequent for categorical columns
+numerical_cols = train.select_dtypes(include=['float64', 'int64']).columns
+categorical_cols = train.select_dtypes(include=['object']).columns
+
+# Exclude the target column 'purchaseValue' from numerical columns for imputation
+numerical_cols = [col for col in numerical_cols if col != 'purchaseValue']
+
+# Imputation (median for numerical, most frequent for categorical)
+imputer_num = SimpleImputer(strategy='median')
+imputer_cat = SimpleImputer(strategy='most_frequent')
+
+train[numerical_cols] = imputer_num.fit_transform(train[numerical_cols])
+test[numerical_cols] = imputer_num.transform(test[numerical_cols])
+
+train[categorical_cols] = imputer_cat.fit_transform(train[categorical_cols])
+test[categorical_cols] = imputer_cat.transform(test[categorical_cols])
+
+# Encode categorical columns using LabelEncoder
+label_encoders = {}
+for col in categorical_cols:
+    le = LabelEncoder()
+    # Fit on training data
+    le.fit(train[col])
+    # Transform both train and test data, handling unseen labels by assigning -1 for unseen labels
+    train[col] = le.transform(train[col])
+    
+    # For test data, apply transformation, and assign -1 to unseen labels
+    test[col] = test[col].apply(lambda x: le.transform([x])[0] if x in le.classes_ else len(le.classes_))
+
+    label_encoders[col] = le
+
+# Separate features and target
+X = train.drop(columns=['purchaseValue'])
+y = train['purchaseValue']
+X_test = test
+
+# Ensure the same feature order for both training and test set
+X_test = X_test[X.columns]  # Match the feature order with training data
+
+# Standardize the features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+X_test_scaled = scaler.transform(X_test)
+
+# Hyperparameter grid for RandomizedSearchCV
+param_dist = {
+    'n_estimators': randint(100, 500),
+    'learning_rate': uniform(0.01, 0.3),
+    'max_depth': randint(3, 10),
+    'subsample': uniform(0.5, 0.9),
+    'colsample_bytree': uniform(0.5, 0.9),
+    'gamma': uniform(0, 1)
+}
+
+# Initialize XGBoost Regressor
+xgb_model = XGBRegressor(random_state=42, verbosity=0)
+
+# Randomized search with cross-validation
+search = RandomizedSearchCV(
+    estimator=xgb_model,
+    param_distributions=param_dist,
+    n_iter=10,
+    scoring='r2',
+    cv=3,
+    verbose=0,
+    n_jobs=2,
+    random_state=42
+)
+
+# Fit the model
+search.fit(X_scaled, y)
+
+# Get the best hyperparameters
+best_params = search.best_params_
+
+# Refit the model with the best parameters
+best_model = XGBRegressor(
+    **best_params,
+    random_state=42,
+    verbosity=0,
+    early_stopping_rounds=50
+)
+
+# Train the best model on the full training set
+best_model.fit(X_scaled, y, eval_set=[(X_scaled, y)], verbose=False)
+
+# Evaluate the model on the training set
+train_preds = best_model.predict(X_scaled)
+train_r2 = r2_score(y, train_preds)
+
+# Output R² score
+print(f"R² score on training data: {train_r2:.4f}")
+
+# === Prediction ===
+test_preds = best_model.predict(X_test_scaled)
+test_preds = np.clip(test_preds, 0, None)
+
+# === Submission ===
+sample_submission = pd.read_csv("/kaggle/input/engage-2-value-from-clicks-to-conversions/sample_submission.csv")
+
+submission = pd.DataFrame({
+    'id': sample_submission['ID'],
+    'purchaseValue': test_preds
+})
+
+submission.to_csv("submission.csv", index=False)
+/tmp/ipykernel_13/3980513905.py:19: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  train_df.replace(missing_markers, np.nan, inplace=True)
+/tmp/ipykernel_13/3980513905.py:20: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  test_df.replace(missing_markers, np.nan, inplace=True)
+/usr/local/lib/python3.11/dist-packages/sklearn/model_selection/_validation.py:378: FitFailedWarning: 
+21 fits failed out of a total of 30.
+The score on these train-test partitions for these parameters will be set to nan.
+If these failures are not expected, you can try to debug them by setting error_score='raise'.
+
+Below are more details about the failures:
+--------------------------------------------------------------------------------
+3 fits failed with the following error:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/sklearn/model_selection/_validation.py", line 686, in _fit_and_score
+    estimator.fit(X_train, y_train, **fit_params)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/sklearn.py", line 1090, in fit
+    self._Booster = train(
+                    ^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/training.py", line 181, in train
+    bst.update(dtrain, i, obj)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 2050, in update
+    _check_call(
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 282, in _check_call
+    raise XGBoostError(py_str(_LIB.XGBGetLastError()))
+xgboost.core.XGBoostError: value 1.13727 for Parameter subsample exceed bound [0,1]
+subsample: Row subsample ratio of training instance.
+
+--------------------------------------------------------------------------------
+3 fits failed with the following error:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/sklearn/model_selection/_validation.py", line 686, in _fit_and_score
+    estimator.fit(X_train, y_train, **fit_params)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/sklearn.py", line 1090, in fit
+    self._Booster = train(
+                    ^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/training.py", line 181, in train
+    bst.update(dtrain, i, obj)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 2050, in update
+    _check_call(
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 282, in _check_call
+    raise XGBoostError(py_str(_LIB.XGBGetLastError()))
+xgboost.core.XGBoostError: value 1.05067 for Parameter colsample_bytree exceed bound [0,1]
+colsample_bytree: Subsample ratio of columns, resample on each tree construction.
+
+--------------------------------------------------------------------------------
+3 fits failed with the following error:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/sklearn/model_selection/_validation.py", line 686, in _fit_and_score
+    estimator.fit(X_train, y_train, **fit_params)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/sklearn.py", line 1090, in fit
+    self._Booster = train(
+                    ^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/training.py", line 181, in train
+    bst.update(dtrain, i, obj)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 2050, in update
+    _check_call(
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 282, in _check_call
+    raise XGBoostError(py_str(_LIB.XGBGetLastError()))
+xgboost.core.XGBoostError: value 1.05655 for Parameter colsample_bytree exceed bound [0,1]
+colsample_bytree: Subsample ratio of columns, resample on each tree construction.
+
+--------------------------------------------------------------------------------
+3 fits failed with the following error:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/sklearn/model_selection/_validation.py", line 686, in _fit_and_score
+    estimator.fit(X_train, y_train, **fit_params)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/sklearn.py", line 1090, in fit
+    self._Booster = train(
+                    ^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/training.py", line 181, in train
+    bst.update(dtrain, i, obj)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 2050, in update
+    _check_call(
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 282, in _check_call
+    raise XGBoostError(py_str(_LIB.XGBGetLastError()))
+xgboost.core.XGBoostError: value 1.11228 for Parameter colsample_bytree exceed bound [0,1]
+colsample_bytree: Subsample ratio of columns, resample on each tree construction.
+
+--------------------------------------------------------------------------------
+3 fits failed with the following error:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/sklearn/model_selection/_validation.py", line 686, in _fit_and_score
+    estimator.fit(X_train, y_train, **fit_params)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/sklearn.py", line 1090, in fit
+    self._Booster = train(
+                    ^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/training.py", line 181, in train
+    bst.update(dtrain, i, obj)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 2050, in update
+    _check_call(
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 282, in _check_call
+    raise XGBoostError(py_str(_LIB.XGBGetLastError()))
+xgboost.core.XGBoostError: value 1.11494 for Parameter subsample exceed bound [0,1]
+subsample: Row subsample ratio of training instance.
+
+--------------------------------------------------------------------------------
+3 fits failed with the following error:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/sklearn/model_selection/_validation.py", line 686, in _fit_and_score
+    estimator.fit(X_train, y_train, **fit_params)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/sklearn.py", line 1090, in fit
+    self._Booster = train(
+                    ^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/training.py", line 181, in train
+    bst.update(dtrain, i, obj)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 2050, in update
+    _check_call(
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 282, in _check_call
+    raise XGBoostError(py_str(_LIB.XGBGetLastError()))
+xgboost.core.XGBoostError: value 1.049 for Parameter colsample_bytree exceed bound [0,1]
+colsample_bytree: Subsample ratio of columns, resample on each tree construction.
+
+--------------------------------------------------------------------------------
+3 fits failed with the following error:
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/sklearn/model_selection/_validation.py", line 686, in _fit_and_score
+    estimator.fit(X_train, y_train, **fit_params)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/sklearn.py", line 1090, in fit
+    self._Booster = train(
+                    ^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 730, in inner_f
+    return func(**kwargs)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/training.py", line 181, in train
+    bst.update(dtrain, i, obj)
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 2050, in update
+    _check_call(
+  File "/usr/local/lib/python3.11/dist-packages/xgboost/core.py", line 282, in _check_call
+    raise XGBoostError(py_str(_LIB.XGBGetLastError()))
+xgboost.core.XGBoostError: value 1.25806 for Parameter subsample exceed bound [0,1]
+subsample: Row subsample ratio of training instance.
+
+  warnings.warn(some_fits_failed_message, FitFailedWarning)
+/usr/local/lib/python3.11/dist-packages/sklearn/model_selection/_search.py:952: UserWarning: One or more of the test scores are non-finite: [0.28360726        nan 0.34439361 0.36716076        nan        nan
+        nan        nan        nan        nan]
+  warnings.warn(
+
+R² score on training data: 0.9305   ---- this was giving .54 on kaggle    and previous import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, RandomizedSearchCV
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.linear_model import Ridge
+from sklearn.feature_selection import SelectFromModel
+from sklearn.metrics import r2_score
+from xgboost import XGBRegressor
+from scipy.stats import uniform, randint
+
+# Load data
+train_df = pd.read_csv("/kaggle/input/engage-2-value-from-clicks-to-conversions/train_data.csv")
+test_df = pd.read_csv("/kaggle/input/engage-2-value-from-clicks-to-conversions/test_data.csv")
+
+# Replace missing markers with NaN
+missing_markers = ['Unknown', 'not available in demo dataset', '(not set)', '(not provided)']
+train_df.replace(missing_markers, np.nan, inplace=True)
+test_df.replace(missing_markers, np.nan, inplace=True)
+
+# Drop columns with >= 70% missing or only one unique value
+threshold = 0.7
+missing_ratio = train_df.isna().mean()
+drop_cols = missing_ratio[missing_ratio >= threshold].index.tolist()
+n_uniq = [col for col in train_df.columns if train_df[col].nunique() == 1]
+train = train_df.drop(columns=n_uniq + drop_cols, errors='ignore')
+test = test_df.drop(columns=n_uniq + drop_cols, errors='ignore')
+
+# Split features and target
+X = train.drop(columns=['purchaseValue'])
+y = train['purchaseValue']
+
+# Combine for encoding, using cleaned test
+combined = pd.concat([X, test], ignore_index=True)
+
+# Encode object columns with LabelEncoder + unseen category handling
+for col in combined.select_dtypes(include='object').columns:
+    le = LabelEncoder()
+    le.fit(X[col].astype(str))  # fit only on training data
+    mapping = {label: idx for idx, label in enumerate(le.classes_)}
+    combined[col] = combined[col].astype(str).map(mapping).fillna(-1).astype(int)
+
+# Split back
+X_train_all = combined.iloc[:len(X), :]
+X_test_all = combined.iloc[len(X):, :]
+
+# Imputation and scaling
+imputer = SimpleImputer(strategy='median')
+X_train_imp = imputer.fit_transform(X_train_all)
+X_test_imp = imputer.transform(X_test_all)
+
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train_imp)
+X_test_scaled = scaler.transform(X_test_imp)
+
+# Train-validation split
+X_train, X_val, y_train, y_val = train_test_split(X_train_scaled, y, test_size=0.2, random_state=42)
+
+# Feature selection with Ridge
+ridge = Ridge(alpha=1.0).fit(X_train, y_train)
+selector = SelectFromModel(ridge, threshold=1e6, prefit=True)
+X_train_sel = selector.transform(X_train)
+X_val_sel = selector.transform(X_val)
+X_test_sel = selector.transform(X_test_scaled)
+
+# Hyperparameter search
+param_dist = {
+    'n_estimators': randint(100, 500),
+    'learning_rate': uniform(0.01, 0.3),
+    'max_depth': randint(3, 10),
+    'subsample': uniform(0.5, 0.5),
+    'colsample_bytree': uniform(0.5, 0.5)
+}
+
+
+xgb_model = XGBRegressor(random_state=42, verbosity=0)
+
+search = RandomizedSearchCV(
+    estimator=xgb_model,
+    param_distributions=param_dist,
+    n_iter=10,
+    scoring='r2',
+    cv=3,
+    verbose=0,
+    n_jobs=2,
+    random_state=42
+)
+
+search.fit(X_train_sel, y_train)
+
+# Refit best model
+best_params = search.best_params_
+
+best_model = XGBRegressor(
+    **best_params,
+    random_state=42,
+    verbosity=0,
+    early_stopping_rounds=50
+)
+
+# Train on full train set with early stopping on val
+X_full = np.vstack([X_train_sel, X_val_sel])
+y_full = pd.concat([y_train, y_val])
+
+best_model.fit(
+    X_full, y_full,
+    eval_set=[(X_val_sel, y_val)],
+    verbose=False
+)
+
+# Evaluate
+val_preds_refit = best_model.predict(X_val_sel)
+print("Refit Tuned XGBoost R²:", r2_score(y_val, val_preds_refit))
+/tmp/ipykernel_13/139380719.py:18: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  train_df.replace(missing_markers, np.nan, inplace=True)
+/tmp/ipykernel_13/139380719.py:19: FutureWarning: Downcasting behavior in `replace` is deprecated and will be removed in a future version. To retain the old behavior, explicitly call `result.infer_objects(copy=False)`. To opt-in to the future behavior, set `pd.set_option('future.no_silent_downcasting', True)`
+  test_df.replace(missing_markers, np.nan, inplace=True)
+
+Refit Tuned XGBoost R²: 0.9636678689133444
+
+# === Prediction ===
+test_preds = best_model.predict(X_test_sel)
+test_preds = np.clip(test_preds, 0, None)
+
+# === Submission ===
+sample_submission = pd.read_csv("/kaggle/input/engage-2-value-from-clicks-to-conversions/sample_submission.csv")
+
+submission = pd.DataFrame({
+    'id': sample_submission['ID'],
+    'purchaseValue': test_preds
+})
+submission.to_csv("submission.csv", index=False)  this was giving approx .607 score now i want to decrease my r2score not extensive but increse kaggle sscore is very important here
+
+
+# XGBoost Overfitting Reduction Strategy: From R² 0.96 to Target Zone 0.4-0.6
+Your comprehensive analysis reveals a classic machine learning challenge: achieving the sweet spot between model complexity and generalization. With your current R² of 0.96 and Kaggle score of 0.607, you're experiencing severe overfitting that's limiting your competition performance. Based on extensive research into XGBoost regularization techniques and your proven strategies, here's a systematic approach to reduce overfitting while improving your Kaggle score.
+
+## Current Problem Analysis
+Your latest implementation shows clear signs of overfitting with an R² gap that's likely exceeding 0.5 between training and validation performance. While your Kaggle score of 0.607 demonstrates that your model captures some signal, the extreme overfitting suggests you're memorizing training patterns rather than learning generalizable relationships[1][2].
+
+The research shows that **lower learning rates with more trees consistently outperform high learning rate approaches** for preventing overfitting[3]. Your Version 2 approach (R²=0.47, Kaggle=0.225) demonstrated good generalization principles but lacked the Kaggle performance you achieved later.
+
+## Immediate Anti-Overfitting Implementation
+### Priority 1: Core Regularization Parameters
+The most effective overfitting prevention comes from **direct regularization control**[1][4]. Implement these parameters immediately:
+
+```python
+anti_overfit_params = {
+    # L1/L2 Regularization (most critical)
+    'reg_alpha': 0.1,          # L1 regularization for sparsity
+    'reg_lambda': 1.0,         # L2 regularization for smoothing
+    'gamma': 0.5,              # Minimum loss reduction for splits
+    'min_child_weight': 5,     # Minimum sum of weights in leaf nodes
+    
+    # Complexity Reduction
+    'max_depth': 4,            # Shallow trees (down from 6+)
+    'learning_rate': 0.01,     # Very low learning rate
+    'n_estimators': 3000,      # More trees to compensate
+}
+```
+
+Research demonstrates that **L2 regularization (reg_lambda) is more effective than L1 for regression tasks** with structured data like yours[2][5]. The gamma parameter acts as a **minimum loss reduction threshold**, forcing the model to make only meaningful splits[1][4].
+
+### Priority 2: Sampling-Based Regularization
+Add randomness through subsampling to prevent overfitting to specific patterns[1][6]:
+
+```python
+sampling_params = {
+    'subsample': 0.7,           # Use 70% of rows per tree
+    'colsample_bytree': 0.7,    # Use 70% of features per tree
+    'colsample_bylevel': 0.8,   # Feature sampling per tree level
+}
+```
+
+This approach introduces **controlled randomness** that forces your model to generalize rather than memorize specific data points[7][4].
+
+## Enhanced Preprocessing Strategy
+### Frequency Encoding Over Label Encoding
+Your analysis correctly identified that **frequency encoding significantly outperforms label encoding** for high-cardinality categorical features[8][9]. This approach handles unseen categories gracefully and prevents the arbitrary ordinal relationships that label encoding introduces:
+
+```python
+def apply_frequency_encoding(train_df, test_df, categorical_cols):
+    for col in categorical_cols:
+        if col != 'purchaseValue':
+            freq_map = train_df[col].value_counts().to_dict()
+            train_df[col] = train_df[col].map(freq_map).fillna(0)
+            test_df[col] = test_df[col].map(freq_map).fillna(0)
+    return train_df, test_df
+```
+
+### Stratified Validation Implementation
+Your discovery that **stratified sampling on (purchase > 0) improves both R² and Kaggle scores** aligns with research showing that proper stratification is crucial for imbalanced datasets[10][11]. Implement this consistently:
+
+```python
+from sklearn.model_selection import StratifiedKFold
+
+# Create binary target for stratification
+y_binary = (y > 0).astype(int)
+
+# Use stratified split
+X_train, X_val, y_train, y_val = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y_binary
+)
+```
+
+## Advanced Overfitting Prevention
+### Cross-Validation Monitoring
+Implement robust cross-validation to detect overfitting early[12][13]:
+
+```python
+def monitor_overfitting(model, X_train, y_train, X_val, y_val):
+    train_r2 = model.score(X_train, y_train)
+    val_r2 = model.score(X_val, y_val)
+    r2_gap = train_r2 - val_r2
+    
+    if r2_gap = threshold].index.tolist()
+    train_df = train_df.drop(columns=drop_cols, errors='ignore')
+    test_df = test_df.drop(columns=drop_cols, errors='ignore')
+    
+    # FREQUENCY ENCODING (your proven approach)
+    categorical_cols = train_df.select_dtypes(include=['object']).columns.tolist()
+    if 'purchaseValue' in categorical_cols:
+        categorical_cols.remove('purchaseValue')
+    
+    for col in categorical_cols:
+        freq_map = train_df[col].value_counts().to_dict()
+        train_df[col] = train_df[col].map(freq_map).fillna(0)
+        test_df[col] = test_df[col].map(freq_map).fillna(0)
+    
+    # OUTLIER CAPPING (your proven approach)
+    cap_cols = ['pageViews', 'totalHits']
+    for col in cap_cols:
+        if col in train_df.columns:
+            train_df[col] = np.clip(pd.to_numeric(train_df[col], errors='coerce'), 0, 100)
+            test_df[col] = np.clip(pd.to_numeric(test_df[col], errors='coerce'), 0, 100)
+    
+    return train_df, test_df
+
+# Anti-overfitting parameters
+params = {
+    'reg_alpha': 0.1,           # L1 regularization
+    'reg_lambda': 1.0,          # L2 regularization
+    'gamma': 0.5,               # Min loss reduction
+    'min_child_weight': 5,      # Min leaf weight
+    'max_depth': 4,             # Shallow trees
+    'learning_rate': 0.01,      # Very low learning rate
+    'n_estimators': 3000,       # More trees
+    'subsample': 0.7,           # Row sampling
+    'colsample_bytree': 0.7,    # Feature sampling
+    'early_stopping_rounds': 50,
+    'random_state': 42,
+    'verbosity': 0
+}
+
+# Implementation
+train_df, test_df = preprocess_data(train_df, test_df)
+X = train_df.drop(['purchaseValue'], axis=1)
+y = train_df['purchaseValue']
+
+# Stratified split
+y_binary = (y > 0).astype(int)
+X_train, X_val, y_train, y_val = train_test_split(
+    X, y, test_size=0.2, random_state=42, stratify=y_binary
+)
+
+# Train with anti-overfitting parameters
+model = XGBRegressor(**params)
+model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)
+
+# Monitor results
+train_r2 = model.score(X_train, y_train)
+val_r2 = model.score(X_val, y_val)
+print(f"Train R²: {train_r2:.4f}, Validation R²: {val_r2:.4f}")
+print(f"Overfitting Gap: {train_r2 - val_r2:.4f}")
+```
+
+## Key Success Metrics
+Target these specific metrics to validate your improvements:
+
+- **R² Gap  0.65**: Improved competition performance
+- **Consistent CV Performance**: Stable across multiple folds
+
+## Emergency Adjustments
+If your R² remains above 0.7 after implementing these changes:
+
+1. **Increase reg_lambda to 2.0** for stronger L2 regularization
+2. **Decrease learning_rate to 0.005** with proportionally more trees
+3. **Increase gamma to 1.0** for more conservative splitting
+4. **Add aggressive feature selection** removing bottom 50% of features
+
+This systematic approach builds upon your proven strategies while addressing the core overfitting issues. The combination of your effective preprocessing pipeline with research-backed regularization techniques should achieve your target R² range while improving your Kaggle competition performance.

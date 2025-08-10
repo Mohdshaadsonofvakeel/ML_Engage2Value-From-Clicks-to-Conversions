@@ -1,0 +1,516 @@
+Train shape: (116023, 52)
+Test shape: (29006, 51)
+
+--- Data Types ---
+object     37
+int64       9
+float64     5
+bool        1
+Name: count, dtype: int64
+
+--- Sample Rows ---
+/usr/local/lib/python3.11/dist-packages/pandas/io/formats/format.py:1458: RuntimeWarning: invalid value encountered in greater
+  has_large_values = (abs_vals > 1e6).any()
+/usr/local/lib/python3.11/dist-packages/pandas/io/formats/format.py:1459: RuntimeWarning: invalid value encountered in less
+  has_small_values = ((abs_vals < 10 ** (-self.digits)) & (abs_vals > 0)).any()
+/usr/local/lib/python3.11/dist-packages/pandas/io/formats/format.py:1459: RuntimeWarning: invalid value encountered in greater
+  has_small_values = ((abs_vals < 10 ** (-self.digits)) & (abs_vals > 0)).any()
+/usr/local/lib/python3.11/dist-packages/pandas/io/formats/format.py:1458: RuntimeWarning: invalid value encountered in greater
+  has_large_values = (abs_vals > 1e6).any()
+/usr/local/lib/python3.11/dist-packages/pandas/io/formats/format.py:1459: RuntimeWarning: invalid value encountered in less
+  has_small_values = ((abs_vals < 10 ** (-self.digits)) & (abs_vals > 0)).any()
+/usr/local/lib/python3.11/dist-packages/pandas/io/formats/format.py:1459: RuntimeWarning: invalid value encountered in greater
+  has_small_values = ((abs_vals < 10 ** (-self.digits)) & (abs_vals > 0)).any()
+trafficSource.isTrueDirect	purchaseValue	browser	device.screenResolution	trafficSource.adContent	trafficSource.keyword	screenSize	geoCluster	trafficSource.adwordsClickInfo.slot	device.mobileDeviceBranding	...	device.language	deviceType	userChannel	device.browserVersion	totalHits	device.screenColors	sessionStart	geoNetwork.continent	device.isMobile	new_visits
+60608	True	20480000.0	Chrome	not available in demo dataset	NaN	(not provided)	medium	Region_2	NaN	not available in demo dataset	...	not available in demo dataset	desktop	Organic Search	not available in demo dataset	20	not available in demo dataset	1504636002	Americas	False	NaN
+89327	NaN	0.0	Chrome	not available in demo dataset	NaN	NaN	medium	Region_2	NaN	not available in demo dataset	...	not available in demo dataset	desktop	Organic Search	not available in demo dataset	2	not available in demo dataset	1494975917	Americas	False	NaN
+109628	NaN	0.0	Chrome	not available in demo dataset	NaN	(not provided)	medium	Region_1	NaN	not available in demo dataset	...	not available in demo dataset	tablet	Organic Search	not available in demo dataset	1	not available in demo dataset	1503447107	Americas	True	1.0
+3 rows × 52 columns
+
+add Codeadd Markdown
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+sns.histplot(train['purchaseValue'], bins=100, kde=True)
+plt.title("Target Distribution: purchaseValue")
+plt.show()
+
+print(train['purchaseValue'].describe())
+print("Skew:", train['purchaseValue'].skew())
+
+/usr/local/lib/python3.11/dist-packages/seaborn/_oldcore.py:1119: FutureWarning: use_inf_as_na option is deprecated and will be removed in a future version. Convert inf values to NaN before operating instead.
+  with pd.option_context('mode.use_inf_as_na', True):
+
+count    1.160230e+05
+mean     2.656393e+07
+std      2.051825e+08
+min      0.000000e+00
+25%      0.000000e+00
+50%      0.000000e+00
+75%      0.000000e+00
+max      2.312950e+10
+Name: purchaseValue, dtype: float64
+Skew: 53.90790631995238
+add Codeadd Markdown
+missing_train = train.isnull().mean().sort_values(ascending=False)
+missing_test = test.isnull().mean().sort_values(ascending=False)
+
+print("Top missing in train:")
+print(missing_train[missing_train > 0].head(20))
+
+print("\nTop missing in test:")
+print(missing_test[missing_test > 0].head(20))
+
+Top missing in train:
+trafficSource.adContent                         0.974462
+trafficSource.adwordsClickInfo.isVideoAd        0.963102
+trafficSource.adwordsClickInfo.page             0.963102
+trafficSource.adwordsClickInfo.adNetworkType    0.963102
+trafficSource.adwordsClickInfo.slot             0.963102
+trafficSource.referralPath                      0.631849
+trafficSource.isTrueDirect                      0.630332
+trafficSource.keyword                           0.619369
+totals.bounces                                  0.593632
+new_visits                                      0.306017
+pageViews                                       0.000069
+dtype: float64
+
+Top missing in test:
+trafficSource.adContent                         0.973833
+trafficSource.adwordsClickInfo.adNetworkType    0.961835
+trafficSource.adwordsClickInfo.isVideoAd        0.961835
+trafficSource.adwordsClickInfo.page             0.961835
+trafficSource.adwordsClickInfo.slot             0.961835
+trafficSource.referralPath                      0.634179
+trafficSource.isTrueDirect                      0.629008
+trafficSource.keyword                           0.619251
+totals.bounces                                  0.595532
+new_visits                                      0.307247
+pageViews                                       0.000103
+dtype: float64
+add Codeadd Markdown
+summary = pd.DataFrame({
+    'dtype': train.dtypes,
+    'n_unique': train.nunique(),
+    'missing_frac': train.isna().mean(),
+    'sample_value': train.iloc[0]
+}).sort_values(by='n_unique', ascending=False)
+
+display(summary)
+
+dtype	n_unique	missing_frac	sample_value
+sessionStart	int64	107388	0.000000	1500100799
+sessionId	int64	107379	0.000000	1500100799
+userId	int64	100499	0.000000	61421
+purchaseValue	float64	6766	0.000000	0.0
+trafficSource.referralPath	object	941	0.631849	/intl/hr/yt/about/
+geoNetwork.city	object	695	0.000000	Redmond
+date	int64	638	0.000000	20170714
+trafficSource.keyword	object	566	0.619369	NaN
+geoNetwork.region	object	388	0.000000	Washington
+sessionNumber	int64	230	0.000000	1
+totalHits	int64	225	0.000000	1
+locationCountry	object	193	0.000000	United States
+pageViews	float64	175	0.000069	1.0
+trafficSource	object	161	0.000000	youtube.com
+geoNetwork.metro	object	104	0.000000	Seattle-Tacoma WA
+trafficSource.adContent	object	53	0.974462	NaN
+browser	object	34	0.000000	Edge
+trafficSource.campaign	object	28	0.000000	(not set)
+geoNetwork.subContinent	object	23	0.000000	Northern America
+os	object	18	0.000000	Windows
+userChannel	object	8	0.000000	Social
+trafficSource.medium	object	7	0.000000	referral
+geoNetwork.continent	object	6	0.000000	Americas
+geoCluster	object	5	0.000000	Region_2
+trafficSource.adwordsClickInfo.page	float64	5	0.963102	NaN
+deviceType	object	3	0.000000	desktop
+geoNetwork.networkDomain	object	3	0.000000	domain1
+trafficSource.adwordsClickInfo.slot	object	3	0.963102	NaN
+gclIdPresent	int64	2	0.000000	0
+trafficSource.adwordsClickInfo.adNetworkType	object	2	0.963102	NaN
+device.isMobile	bool	2	0.000000	False
+device.language	object	1	0.000000	not available in demo dataset
+locationZone	int64	1	0.000000	8
+device.browserVersion	object	1	0.000000	not available in demo dataset
+device.screenColors	object	1	0.000000	not available in demo dataset
+totals.bounces	float64	1	0.593632	1.0
+device.mobileDeviceModel	object	1	0.000000	not available in demo dataset
+trafficSource.isTrueDirect	object	1	0.630332	NaN
+socialEngagementType	object	1	0.000000	Not Socially Engaged
+device.browserSize	object	1	0.000000	not available in demo dataset
+browserMajor	object	1	0.000000	not available in demo dataset
+trafficSource.adwordsClickInfo.isVideoAd	object	1	0.963102	NaN
+geoNetwork.networkLocation	object	1	0.000000	not available in demo dataset
+totals.visits	int64	1	0.000000	1
+device.flashVersion	object	1	0.000000	not available in demo dataset
+device.operatingSystemVersion	object	1	0.000000	not available in demo dataset
+device.mobileDeviceMarketingName	object	1	0.000000	not available in demo dataset
+device.mobileInputSelector	object	1	0.000000	not available in demo dataset
+device.mobileDeviceBranding	object	1	0.000000	not available in demo dataset
+screenSize	object	1	0.000000	medium
+device.screenResolution	object	1	0.000000	not available in demo dataset
+new_visits	float64	1	0.306017	1.0
+add Codeadd Markdown
+cat_cols = train.select_dtypes(include='object').columns.tolist()
+print("Categorical Columns:", cat_cols)
+
+for col in cat_cols:
+    print(f"\n--- {col} ---")
+    print(train[col].value_counts(dropna=False).head(10))
+
+Categorical Columns: ['trafficSource.isTrueDirect', 'browser', 'device.screenResolution', 'trafficSource.adContent', 'trafficSource.keyword', 'screenSize', 'geoCluster', 'trafficSource.adwordsClickInfo.slot', 'device.mobileDeviceBranding', 'device.mobileInputSelector', 'trafficSource.campaign', 'device.mobileDeviceMarketingName', 'geoNetwork.networkDomain', 'device.operatingSystemVersion', 'device.flashVersion', 'geoNetwork.region', 'trafficSource', 'geoNetwork.networkLocation', 'os', 'geoNetwork.subContinent', 'trafficSource.medium', 'trafficSource.adwordsClickInfo.isVideoAd', 'browserMajor', 'locationCountry', 'device.browserSize', 'trafficSource.adwordsClickInfo.adNetworkType', 'socialEngagementType', 'geoNetwork.city', 'geoNetwork.metro', 'device.mobileDeviceModel', 'trafficSource.referralPath', 'device.language', 'deviceType', 'userChannel', 'device.browserVersion', 'device.screenColors', 'geoNetwork.continent']
+
+--- trafficSource.isTrueDirect ---
+trafficSource.isTrueDirect
+NaN     73133
+True    42890
+Name: count, dtype: int64
+
+--- browser ---
+browser
+Chrome               84508
+Safari               19184
+Firefox               4031
+Internet Explorer     2155
+Android Webview       1472
+Edge                  1216
+Safari (in-app)        793
+Opera Mini             733
+Samsung Internet       563
+Opera                  548
+Name: count, dtype: int64
+
+--- device.screenResolution ---
+device.screenResolution
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- trafficSource.adContent ---
+trafficSource.adContent
+NaN                               113060
+Google Merchandise Store            1410
+Google Merchandise Collection        651
+Display Ad created 3/11/14           135
+Placement Accessores 300 x 250       114
+Google Online Store                  104
+Smart display ad - 8/17/2017          87
+Full auto ad IMAGE ONLY               61
+Ad from 12/13/16                      50
+Official Google Merchandise           46
+Name: count, dtype: int64
+
+--- trafficSource.keyword ---
+trafficSource.keyword
+NaN                                71861
+(not provided)                     39066
+6qEhsCssdK0z36ri                    1155
+(User vertical targeting)            924
+(automatic matching)                 670
+(Remarketing/Content targeting)      316
+google merchandise store             266
+1hZbAqLCbjwfgOH7                     255
+Google Merchandise                   208
+1X4Me6ZKNV0zg-jV                      87
+Name: count, dtype: int64
+
+--- screenSize ---
+screenSize
+medium    116023
+Name: count, dtype: int64
+
+--- geoCluster ---
+geoCluster
+Region_2    23294
+Region_4    23278
+Region_3    23221
+Region_5    23211
+Region_1    23019
+Name: count, dtype: int64
+
+--- trafficSource.adwordsClickInfo.slot ---
+trafficSource.adwordsClickInfo.slot
+NaN                       111742
+Top                         2721
+RHS                         1557
+Google Display Network         3
+Name: count, dtype: int64
+
+--- device.mobileDeviceBranding ---
+device.mobileDeviceBranding
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- device.mobileInputSelector ---
+device.mobileInputSelector
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- trafficSource.campaign ---
+trafficSource.campaign
+(not set)                                                               110280
+Data Share Promo                                                          1777
+AW - Dynamic Search Ads Whole Site                                        1497
+1000557 | GA | US | en | Hybrid | GDN Text+Banner | AS                     855
+AW - Accessories                                                           763
+1000557 | GA | US | en | Hybrid | GDN Remarketing                          555
+Smart Display Campaign                                                      87
+"google + redesign/Accessories March 17" All Users Similar Audiences        44
+"google + redesign/Accessories March 17" All Users                          27
+Sports & Fitness/Health & Fitness Buffs                                     18
+Name: count, dtype: int64
+
+--- device.mobileDeviceMarketingName ---
+device.mobileDeviceMarketingName
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- geoNetwork.networkDomain ---
+geoNetwork.networkDomain
+domain1    38795
+domain2    38619
+domain3    38609
+Name: count, dtype: int64
+
+--- device.operatingSystemVersion ---
+device.operatingSystemVersion
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- device.flashVersion ---
+device.flashVersion
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- geoNetwork.region ---
+geoNetwork.region
+not available in demo dataset    60138
+California                       18122
+New York                          5634
+(not set)                         2806
+Illinois                          1625
+Texas                             1600
+Washington                        1494
+England                           1408
+Ontario                            781
+Bangkok                            735
+Name: count, dtype: int64
+
+--- trafficSource ---
+trafficSource
+google                  44332
+(direct)                36837
+youtube.com             19211
+mall.googleplex.com      6388
+analytics.google.com     1826
+Partners                 1779
+dfa                       617
+sites.google.com          533
+google.com                503
+m.facebook.com            365
+Name: count, dtype: int64
+
+--- geoNetwork.networkLocation ---
+geoNetwork.networkLocation
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- os ---
+os
+Windows          39135
+Macintosh        37659
+Android          15866
+iOS              12762
+Linux             5075
+Chrome OS         4743
+(not set)          565
+Windows Phone       95
+Samsung             46
+Tizen               22
+Name: count, dtype: int64
+
+--- geoNetwork.subContinent ---
+geoNetwork.subContinent
+Northern America    63596
+Southeast Asia       7151
+Southern Asia        6484
+Western Europe       6264
+Northern Europe      5998
+Eastern Asia         5036
+South America        4336
+Eastern Europe       4277
+Southern Europe      3755
+Western Asia         3581
+Name: count, dtype: int64
+
+--- trafficSource.medium ---
+trafficSource.medium
+organic      40654
+(none)       36837
+referral     31657
+cpc           4286
+affiliate     1777
+cpm            802
+(not set)       10
+Name: count, dtype: int64
+
+--- trafficSource.adwordsClickInfo.isVideoAd ---
+trafficSource.adwordsClickInfo.isVideoAd
+NaN      111742
+False      4281
+Name: count, dtype: int64
+
+--- browserMajor ---
+browserMajor
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- locationCountry ---
+locationCountry
+United States     60369
+India              5596
+United Kingdom     3902
+Canada             3226
+Vietnam            2119
+Japan              2031
+Germany            2025
+Brazil             1983
+Turkey             1821
+Thailand           1745
+Name: count, dtype: int64
+
+--- device.browserSize ---
+device.browserSize
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- trafficSource.adwordsClickInfo.adNetworkType ---
+trafficSource.adwordsClickInfo.adNetworkType
+NaN              111742
+Google Search      2784
+Content            1497
+Name: count, dtype: int64
+
+--- socialEngagementType ---
+socialEngagementType
+Not Socially Engaged    116023
+Name: count, dtype: int64
+
+--- geoNetwork.city ---
+geoNetwork.city
+not available in demo dataset    60138
+Mountain View                     6672
+New York                          5622
+(not set)                         3603
+San Francisco                     3479
+Sunnyvale                         2381
+Chicago                           1612
+San Jose                          1536
+Los Angeles                       1478
+London                            1306
+Name: count, dtype: int64
+
+--- geoNetwork.metro ---
+geoNetwork.metro
+not available in demo dataset        60138
+(not set)                            21641
+San Francisco-Oakland-San Jose CA    16075
+New York NY                           5702
+Los Angeles CA                        1747
+Chicago IL                            1622
+Seattle-Tacoma WA                     1490
+London                                1311
+Austin TX                              820
+Detroit MI                             606
+Name: count, dtype: int64
+
+--- device.mobileDeviceModel ---
+device.mobileDeviceModel
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- trafficSource.referralPath ---
+trafficSource.referralPath
+NaN                  73309
+/                    17970
+/yt/about/            5212
+/analytics/web/       1633
+/yt/about/tr/         1054
+/yt/about/vi/          970
+/yt/about/es-419/      885
+/yt/about/pt-BR/       827
+/yt/about/th/          800
+/yt/about/ru/          800
+Name: count, dtype: int64
+
+--- device.language ---
+device.language
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- deviceType ---
+deviceType
+desktop    86480
+mobile     25850
+tablet      3693
+Name: count, dtype: int64
+
+--- userChannel ---
+userChannel
+Organic Search    46925
+Referral          21932
+Social            20786
+Direct            18886
+Paid Search        3406
+Display            2301
+Affiliates         1777
+(Other)              10
+Name: count, dtype: int64
+
+--- device.browserVersion ---
+device.browserVersion
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- device.screenColors ---
+device.screenColors
+not available in demo dataset    116023
+Name: count, dtype: int64
+
+--- geoNetwork.continent ---
+geoNetwork.continent
+Americas     69856
+Asia         22384
+Europe       20294
+Africa        1747
+Oceania       1606
+(not set)      136
+Name: count, dtype: int64
+add Codeadd Markdown
+num_cols = train.select_dtypes(include=['int', 'float']).columns.tolist()
+
+print("\nNumerical Columns:", num_cols)
+
+# Correlation with target
+correlations = train[num_cols].corr()['purchaseValue'].sort_values(ascending=False)
+print("\nCorrelation with purchaseValue:")
+print(correlations)
+
+
+Numerical Columns: ['purchaseValue', 'userId', 'gclIdPresent', 'sessionNumber', 'totals.visits', 'sessionId', 'trafficSource.adwordsClickInfo.page', 'pageViews', 'locationZone', 'totals.bounces', 'date', 'totalHits', 'sessionStart', 'new_visits']
+
+Correlation with purchaseValue:
+purchaseValue                          1.000000
+totalHits                              0.251651
+pageViews                              0.248454
+sessionNumber                          0.230585
+userId                                -0.003469
+gclIdPresent                          -0.005652
+date                                  -0.010338
+sessionStart                          -0.018537
+sessionId                             -0.018537
+trafficSource.adwordsClickInfo.page   -0.025839
+totals.visits                               NaN
+locationZone                                NaN
+totals.bounces                              NaN
+new_visits                                  NaN

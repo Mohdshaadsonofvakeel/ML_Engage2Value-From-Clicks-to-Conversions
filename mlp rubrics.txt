@@ -1,0 +1,700 @@
+Published using Google Docs
+Learn more
+MLP Project Guideline[May-25]
+Updated automatically every 5 minutes
+Machine Learning Project - Diploma Level of BS in Data Science and Applications
+Machine Learning Project - Diploma Level of BS in Data Science and Applications
+
+Project Registration Easy 7 Steps
+
+Project Workflow t22025
+
+Duration of the project
+
+Criteria to pass this project course
+
+Kaggle Competition Link
+
+Practice Kaggle Competitions
+
+Project problem type
+
+Rules
+
+Start making submissions
+
+Evaluation of the ML code that is submitted in Kaggle
+
+Registration Status
+
+Milestones and activities:
+
+Making a submission
+
+When will the project submission be discarded?
+
+Libraries allowed
+
+Eligibility to schedule and attend the viva:
+
+Where to check Viva eligibility?
+
+Repeat L1- Viva
+
+Level 2 Viva
+
+How to prepare for Level 2 Viva Voce Examination
+
+Level 2 Viva marking scheme
+
+Repeat Viva-voce Examination
+
+FAQs
+
+Tentative Viva Schedule
+
+How to make Admin(iitmbscs2008p) a collaborator to your competition Kaggle Notebook
+
+
+Project Registration Easy 7 Steps
+
+      0.   Since you will be participating individually, create a Kaggle account if you don’t already have one.
+
+Join the Competition using it's link: (https://www.kaggle.com/t/f36be8a7aee7492683e5b709ab8082eb)
+After joining the competition go to the code tab and create a New Notebook.
+Keep notebook name as  YourRollNo-notebook-t22025 . (i.e 21f1001234-notebook-t22025)
+Share the notebook with iitmbscs2008p collaborator. View access is sufficient and make/keep it private.
+Build your first ML model (dummy or any other) and make your first submission .
+Change your team name to your Kaggle Username.
+Submit your notebook link in the Competition Registration Form.
+
+Without doing this step, which is submitting your Kaggle Notebook link in the Competition Registration Form, you will not be eligible to complete the project or do the viva.
+
+
+                               Project Workflow
+Duration of the project
+Release of project statement:                     Apr 18, 2025
+
+Deadline for submitting notebook link:     Jun 10, 2025
+
+Last date for project submission:               20-July-2025 
+
+
+Criteria for bonus marks(As per grading doc):
+
+
+Marking for the projects wef t22025 :
+
+
+If you finish the project in the same term as the theory course or the subsequent term of the theory course, we will evaluate your project for 105 marks and cap it to 100. Thereafter, the projects will be evaluated out of 100.
+
+
+Criteria to pass this project course
+Students must attempt at least three different models to address the problem, as relying on a single model will not be acceptable. Failure to meet this requirement will result in the MLP project being disqualified.
+Additionally, students are expected to:
+Conduct thorough Exploratory Data Analysis (EDA) to provide meaningful insights and support their modeling choices.
+Clearly explain their code, demonstrating a solid understanding of its functionality and purpose.
+Projects that do not meet these standards will not be considered for evaluation.
+
+ Score cutoff in Kaggle for the final submission to be eligible for viva: 0.45
+
+Passing the project: Viva score >= 25/50 AND Total project score >= 50/100.
+
+The formula for computing Total Score (out of 100) is as follows:
+
+
+Final marks = NB + M + S + V
+
+Where,
+
+NB = score of your notebook out of 10 marks, this is assigned by the viva examiner - EDA (4 marks), Model Training and Selection (3 marks), Comparison of different models (4 marks)
+
+
+M : 5 marks will be awarded to those who successfully complete all milestones.
+
+
+S: Marks for the ML model, 5 marks awarded to all those who cross the cutoff + Score obtained in Kaggle scaled from 0 to 30; Total 35 marks.
+
+
+ 
+
+
+V: Marks in Viva Voce, out of 50 marks.
+
+
+ Final marks = NB + M + S + V
+
+
+Kaggle Competition Link
+Following is the link to the competition: 
+
+https://www.kaggle.com/t/f36be8a7aee7492683e5b709ab8082eb
+
+The effective leaderboard of the competition is the following: 
+
+Click here
+
+
+The effective leaderboard is computed by only those submissions made via FinalNotebook of students.
+
+
+Practice Kaggle Competitions
+The following link has good practice Kaggle competitions:
+
+Kaggle Playground Competitions
+
+Project problem type
+You will be working on a regression/classification problem.
+
+Rules
+The MLP project will be conducted on the Kaggle platform.
+Only students who register for the MLP Project during the course registration window can participate in this project.
+The link to the project on the Kaggle platform is https://www.kaggle.com/t/f36be8a7aee7492683e5b709ab8082eb
+Each student will participate individually only. This is not a group project.
+No external data can be used to train your model, if found otherwise, your project will be discarded.
+Do not use any accelerators available in the Kaggle platform. Use a CPU only environment to execute your notebooks, which is by default for every notebook.
+You are supposed to keep your project code in private mode. You will be disqualified if your code is found public.
+Plagiarism is a serious offense. You are suggested to refer to the student handbook to acquaint yourself with the detailed consequences of plagiarism.
+
+Start making submissions
+Once you have joined the competition on Kaggle you can create a new notebook, start submitting ML code on Kaggle within the notebook and see what score you get using it.
+
+You can make a maximum of 5 submissions every day. If you don't make a submission on a day, the 5 chances will not be carried forward the next day.
+
+You can change the models and see if the score keeps improving.
+
+Evaluation of the ML code that is submitted in Kaggle
+Watch this video for more information on how to create and manage your notebook.- Demo video link          
+
+Create a new notebook inside the competition code tab, referred to as FinalNotebook hence onwards.
+This will be submitted as your final work and will have your best model for evaluation.
+Name your FinalNotebook as “YourRollNo-notebook-t22025”, i.e. your roll no, followed by hyphen/dash(“-”), followed by“notebook-t22025”. All characters should be in lowercase letters. If your roll no is 21F10001234, then your notebook name (i.e. FinalNotebook) should be 21f10001234-notebook-t22025.
+Share your FinalNotebook with the admin of the competition i.e. Kaggle username iitmbscs2008p.
+Do not change the name of this notebook. You can create many other notebooks for experimenting with different models and approaches.
+If you share a notebook with any other name, that notebook will not be counted towards your project.
+Only submissions made from the Final Notebook will be considered for grading.
+
+Your first submission:
+
+Make your first submission from FinalNotebook. You can use any ML model (e.g. dummy model ) for your first submission. We will check from our side to see if we have received it.
+Submissions made by explicitly uploading “.csv”, “.zip” or any other file, will not be counted towards your project.
+
+Milestones:
+
+There will be some milestones in the project. Use milestones as intermediate goals for steadily making progress.
+Submitting at least 2 out of  5 milestones is mandatory to complete the project. There will be one mark awarded for each milestone completion.
+
+Registration Status
+You can check your registration status from the following link: Registration Status Sheet
+
+If your registration is not complete, it is likely due to the following issue:
+
+Team name is ‘-’: that indicates you have not made one successful submission yet. Make one successful submission with your FinalNotebook and set your correct team name.
+Team name not set correctly: set it to your roll number. You may also copy the expected team name from the above sheet and paste it at the appropriate place.
+Shared notebook name is not correct: you have either not shared the FinalNotebook with the competition administrator or named it incorrectly.
+Submissions Made Via Expected Notebook?If it is set to no, that indicates you have not made any successful submissions with your FinalNotebook.
+Milestones and activities:
+Following the milestones and completing the corresponding assignments is mandatory to complete the project. There will not be any marks awarded for the following milestones.
+
+
+
+Deadline
+
+Description
+
+Milestone 1
+
+May 31, 2025
+
+
+Saturday
+
+
+New Extended Deadline: 8th June, 2025
+
+Data loading
+Exploratory Data Analysis
+Data visualization
+Statistical analysis
+Train-Validation Split
+Data Cleaning/ Preprocessing
+Building a baseline model.
+Milestone 2
+
+Jun 14, 2025
+
+
+Saturday
+
+
+New Extended Deadline: 21st June, 2025
+
+
+Linear Models
+Stochastic Gradient Descent
+Tune the hyperparameters of the model.
+
+Milestone 3
+
+Jun 21, 2025
+
+
+Saturday
+
+
+New Extended Deadline: 24th June, 2025
+
+Dimensionality Reduction
+
+Feature Selection
+
+Retrain the models
+
+
+Naive Bayes
+
+Nearest Neighbors
+
+Support Vector Machines
+
+Milestone 4
+
+Jun 28, 2025
+
+
+Saturday
+
+
+No Extension
+
+Ensemble (Bagging, Boosting, Stacking)
+
+Multi-layer Perceptron
+
+Milestone 5
+
+Jul 5, 2025
+
+
+Saturday
+
+Repeat the ML end-to-end process again with insights into the dataset.
+
+Last Submission
+
+20-July-2025
+
+
+Sunday
+
+Last submission for the project.
+
+
+There is an assignment in the corresponding week for each of the above milestones in your project in the Seek portal.
+
+
+Important note: The MLP Project milestones are not in sync with the MLP course. Ideally, the project should be taken after completing the course. The option of taking the MLP course and MLP project together i.e. in the same term, is open for students already having experience with ML (e.g. professional data scientists, data analysts). If you are new to ML, you should complete the MLP course in one term and the MLP project in a later term.
+
+Making a submission
+Watch this video for more information on how to create and manage your notebook.-  Notebook Submission Demo link
+
+Create a Kaggle notebook.
+The code to read and load the data will be already present in the notebook.
+Your notebook should produce a ‘submission.csv’ file containing predictions for test samples. Your newly created submission file should be visible in the ‘output’ tab.
+Submit the submission file. (for details, refer the video link given)
+Make sure the notebook name, its version number, and the submitted file name are as desired.
+Always make a submission from your Kaggle notebook.
+
+When will the project submission be discarded?
+Mismatch between the team name with student roll number.
+Submitting a different Kaggle notebook link in Competition Registration Form, and making submissions with another.
+The python notebook containing the final ML code not being submitted on the Kaggle portal - FinalNotebook not shared with the competition admin.
+Any student found to plagiarize from the internet or fellow student or any other source will fail this project and will have to repeat this project.
+Any student found to submit code with any machine learning libraries (such as TensorFlow, PyTorch, NLTK, word2vec, textblob etc) other than those mentioned below will fail this project.
+Libraries allowed
+Only the following libraries will be allowed to be used in the competition:
+
+NumPy
+Pandas
+Matplotlib
+Scikit-learn 
+XGBoost
+Seaborn
+Imblearn
+SciPy
+Pickle
+regex
+Lightgbm
+Plotly
+Please note these libraries are already installed in your Kaggle notebook. Python in-built libraries can also be used. Using libraries like TensorFlow, PyTorch, NLTK, word2vec, textblob etc is not allowed.
+
+
+Eligibility to schedule and attend the viva:
+You can keep making submissions in the contest every day.
+
+Mandatory condition 1 to be eligible for viva: Your submissions must be ONLY from the Kaggle notebook submitted in Competition Registration Form.
+
+Mandatory condition 2 to be eligible for viva: crossing the score cutoff.
+
+Mandatory condition 3 to be eligible for viva - the submitted FinalNotebook containing your latest ML model, when executed, must cross the cutoff.
+
+Mandatory condition 4 to be eligible for viva - The Python FinalNotebook should pass the plagiarism checker.
+
+Where to check Viva eligibility?
+You can check if you are eligible for the viva exam from the following document: NOT RELEASED YET 
+
+We will add - user name status, First/sample submission status, notebook name status, team name status, effective leaderboard rank, score, NB, V, T, P/F
+
+The above information will be updated every Monday EOD after publishing initially.
+
+
+The cutoff score for the t22025 term Kaggle contest is 0.45
+
+
+Level 1 Viva
+
+The Level-1 Viva is designed to ensure that each participant in the Kaggle Project has put in a significant amount of effort in his MLP Project. This ensures that only participants who have shown dedication and effort in their Project work are eligible for the Level-2 Viva.
+
+
+Following is the checklist for Level 1 viva:
+
+The dataset is appropriately loaded and stored into corresponding variables.
+Exploratory data analysis
+Visualizing key statistics and relationships in the data
+Correctly identify the feature types.
+Detecting missing data and imputation, if required.
+The dataset is appropriately preprocessed,
+scaling numerical features.
+encoding categorical features.
+Appropriate usage of pipelines if any.
+Feature engineering/extraction.
+Hyperparameter tuning of the model to optimize its performance.
+Code should be clean, well-structured, and appropriately commented.
+Highlight important ideas learned from the dataset and/or model.
+Compare at least 3 best models of all the models experimented, analyze their results, and provide insights on the model's performance.
+Make submission with the model with the best score on training data.
+
+Note:-
+
+Performing exploratory data analysis (EDA) and making predictions using a minimum of three models is a mandatory requirement. Additionally, achieving a minimum score of 0.45 is necessary to successfully pass the Level 1 viva examination.
+
+
+Repeat L1- Viva
+If someone scores less than 50% in L1 viva, they will get a chance to reappear for it. However, if the score is more than 50% but they still don’t pass, then based on their L1 performance, they will receive a D/E grade.
+
+Level 2 Viva
+How to prepare for Level 2 Viva Voce Examination
+Kaggle notebook: You are expected to clearly explain the code you have written and logically describe your choice of data preprocessing steps, modeling, and inspection of underfitting/overfitting.
+
+The viva examiner may ask you to briefly (say in 5 minutes or less) walk through your Kaggle notebook.
+
+The viva examiner may ask questions from any course you have taken for your DS diploma. The Kaggle competition may belong to only, say classification, yet the examiner can ask questions from regression and unsupervised machine learning, i.e. all topics you have learned in courses till MLP, e.g. MLF, MLT, statistics etc.
+
+Only using an API (e.g. DecisionTreeClassifier, SVC, etc.) is not sufficient, you should also know how it works internally.
+
+For every machine learning model that you have learnt and/or used in your Kaggle notebook, you must know and be able to explain its 5 components, i.e. data, model, loss function, optimization procedure/training and evaluation.
+
+You may be asked to write code from scratch or make changes to your existing code during your viva exam.
+
+Level 2 Viva marking scheme
+For level 2 viva, students are expected to be well-versed with the following details of the components mentioned in the subsequent table:
+
+1. Conceptual understanding
+
+2. Mathematical details
+
+3. Practical aspect
+
+4. Programming
+
+Repeat Viva-voce Examination
+In case a student scores between 15-24/50 marks, they will not pass the viva but they will get another chance to appear for the viva examination. If they are not able to clear the viva exam on the second attempt also, they will have to repeat the MLP Project in the next term.
+
+
+If a student scores <15/50 in the viva examination, they will not get a second attempt for the viva examination. They have to register and pay the fees, repeat the entire project the next term and become eligible to attend the viva. It is seen that such students need more practice and time to study the fundamentals again.
+
+
+
+
+
+FAQs
+Que: Do I have to take the MLP course and the MLP Project in the same term?
+
+Ans: No, you may take the MLP course in one term and the project in the next.
+
+
+Que: have taken the MLP course and the MLP Project in the same term. However I find that the milestones cover topics which were not covered in the MLP course before the corresponding (milestones’) deadlines. How can I complete the project then?
+
+Ans: If you are taking an MLP course and the MLP project in the same term, then you will have to be proactive and learn the MLP topics (from YT playlists etc.). You will have to follow the pace of the milestones in the project. If you find this to be too hectic, you may complete the MLP course first before taking the project.
+
+
+Que: What is the link to the MLP course playlist on youtube ?
+
+Ans:  https://youtube.com/playlist?list=PLZ2ps__7DhBb3ovNQam2c_WcGeiW9OhQo
+
+
+Que: Can I take my viva before the project’s deadline?
+
+Ans: Yes, if you are confident that you have successfully completed the project and your Kaggle notebook is ready (refer to the viva section), and if you are comfortable taking the viva before the project deadline is over, you can. However, grades for your ‘score’ component will be computed only after the deadline is over. That means you can still make submissions to improve your rank and score after the viva. The final grade will be computed only after you have taken your viva voce exam and the project's deadline is over.
+
+
+Que: Can I finish the project this term and take the viva next term?
+
+Ans:No, as per the recent committee decision students have to complete the project and viva in the same term. Every term the problem statement will change.
+
+
+Que: How can I set my team name as my Kaggle Username.?
+
+Ans: By default Team name is your Kaggle Username but for any reason if you wish to change team name for the competition. Goto Dashboard -> Team -> then set the name of the team.
+
+
+Que: How can I know that I have followed the project registration steps properly and my registration is approved?
+
+Ans: You can track your status in the google sheet provided. You will be given week 2 as a buffer in case information is incorrectly provided in Assignment 1.
+
+
+Que: When can I expect my final grade for this project?
+
+Ans: 2 days after your viva examination is complete.
+
+
+Que: How should I approach my project?
+
+Ans: One way to start your project is to quickly build a baseline model. Then keep improving your pipeline for the entire project. You will have to repeat the end-to-end ML (video from MLP Week 1) process multiple times.
+
+
+Que: I have many models for the dataset, but I am stuck and not able to improve my score.
+
+Ans: You may try hyperparameter tuning and feature engineering. Look at the samples your model is making incorrect predictions, try to learn why that is, and improve your model.
+
+
+Que: My rank and score are much better than what is displayed in the effective leaderboard?
+
+Ans: This could be possible if you have made submissions via a Kaggle notebook as well as csv/zip files, and your csv/zip files are getting better score and rank. However, while computing the effective leaderboard, your submissions via csv/zip files will be ignored.
+
+
+Que: What is the link to the MLP Project t22025 term guidelines document?
+
+Ans: You are reading exactly the same! Following is the link to this document: MLP Project t22025 Guidelines
+
+
+Once the project deadline is over
+
+Upload your Kaggle notebooks to GitHub once the project’s deadline is over. This will serve to build your profile.
+
+
+Tentative Viva Schedule
+
+Viva Planner for MLP May 2025 term: Viva planner 
+
+How to make Admin(iitmbscs2008p) a collaborator to your competition Kaggle Notebook
+Go to the competition page -> Code-> Your Work. Where you will find Kaggle notebooks that you have created in the competition.
+
+
+
+Click on the share button on the right top of the page.
+
+
+
+The window will pop up. Choose Private (Only collaborators can view this notebook)
+(Note: don’t keep it public because you will be offensible if your code is found plagiarized)
+
+
+
+
+
+Click “search Collaborators''. Enter the admin’s Kaggle username, which is “iitmbscs2008p” and choose “IITM BS CS2008 (iitmbscs2008p)”.  
+(Note: Don’t add other collaborators because you will be offensible if your code is found plagiarized. Don’t make your notebook public ever)
+
+
+
+
+Give “can view” access to  the display name  “IITM BS CS2008”.
+
+
+
+
+
+Allow comments: On
+The screen will look like the following: click the “Save” button.
+
+
+Once shared, you can proceed to register for the ML Viva Voce exam.
+
+
+
+
+
+###########3Engage2Value: From Clicks to Conversions
+Predict purchase value from multi-session digital behavior using ML.
+
+
+Engage2Value: From Clicks to Conversions
+
+Submit Prediction
+Overview
+MLP Project T22025
+After joining the competition go to the code tab and create a New Notebook.
+Keep notebook name as YourRollNo-notebook- t22025 . (i.e 21f1001234-notebook-t22025)
+Share the notebook with iitmbscs2008p collaborator. View access is sufficient and make/keep it private.
+Build your first ML model (dummy or any other)
+predict target of the test data as store as given in sample_submission.csv
+store predictions in a DataFrame with "id" and "target columns.
+save the DataFrame in a csv and make a submission using that csv
+Keep your team name as Your kaggle user id.
+Submit your notebook details (Name, Link etc.) in the Competition Registration Form
+Start
+
+2 months ago
+Close
+18 days to go
+Description
+The goal of this competition is to predict a customer’s purchase value based on their multi-session behavior across digital touchpoints. The dataset captures anonymized user interactions such as browser types, traffic sources, device details, and geographical indicators. By modeling these patterns, participants will estimate the purchase potential of each user, helping optimize marketing and engagement strategies.
+
+Evaluation
+Submissions are evaluated on r2_score() between the predicted values and the True target.
+
+Submission File
+For each id in the test set, you must predict the target variable purchaseValue. The file should contain a header and have the following format:
+
+
+
+
+
+Dataset Description
+This dataset captures detailed session-level information from a large-scale digital commerce platform. Each row corresponds to a unique user session and includes data on user behavior, acquisition channels, device information, and geographical location.
+
+Participants are expected to predict the purchaseValue, which represents the total amount spent during a given session.
+
+Key Feature Categories
+User Behavior & Session Metrics
+
+totalHits, pageViews, totals.bounces, new_visits, totals.visits: Indicators of user engagement and session activity.
+sessionNumber, sessionStart: Information related to session sequence and timing.
+Device & Technical Attributes
+
+deviceType, os, browser, screenSize, device.browserSize, device.language: Details about the user's device and browsing environment.
+browserMajor, device.*: Encompasses a variety of device-level descriptors such as model, version, and screen specifications.
+gclIdPresent: Signals the presence of a Google Click ID used in ad tracking.
+Traffic & Marketing Source
+
+userChannel, trafficSource, trafficSource.medium, trafficSource.keyword, trafficSource.campaign: Insights into how users arrived at the platform.
+trafficSource.adwordsClickInfo.*: Contains attributes from advertising sources, including ad network type and slot.
+trafficSource.adContent, trafficSource.referralPath, trafficSource.isTrueDirect: Provide further attribution details.
+Geographical Context
+
+geoNetwork.city, locationCountry, geoNetwork.continent, geoNetwork.subContinent, geoNetwork.metro, geoNetwork.region: Geographic identifiers to help understand regional behavior trends.
+geoCluster, locationZone: Groupings based on geographic or behavioral patterns.
+Identifiers
+
+userId, sessionId: Unique identifiers for each user and session, allowing for multi-session analysis.
+Target Variable
+
+purchaseValue: The amount (in currency units) spent by the customer during the session. This is the target variable to be predicted.
+
+
+
+
+
+
+
+
+Milestones and activities:
+Following the milestones and completing the corresponding assignments is mandatory to complete the project. There will not be any marks awarded for the following milestones.
+
+
+
+Deadline
+
+Description
+
+Milestone 1
+
+May 31, 2025
+
+
+Saturday
+
+
+New Extended Deadline: 8th June, 2025
+
+Data loading
+Exploratory Data Analysis
+Data visualization
+Statistical analysis
+Train-Validation Split
+Data Cleaning/ Preprocessing
+Building a baseline model.
+Milestone 2
+
+Jun 14, 2025
+
+
+Saturday
+
+
+New Extended Deadline: 21st June, 2025
+
+
+Linear Models
+Stochastic Gradient Descent
+Tune the hyperparameters of the model.
+
+Milestone 3
+
+Jun 21, 2025
+
+
+Saturday
+
+
+New Extended Deadline: 24th June, 2025
+
+Dimensionality Reduction
+
+Feature Selection
+
+Retrain the models
+
+
+Naive Bayes
+
+Nearest Neighbors
+
+Support Vector Machines
+
+Milestone 4
+
+Jun 28, 2025
+
+
+Saturday
+
+
+No Extension
+
+Ensemble (Bagging, Boosting, Stacking)
+
+Multi-layer Perceptron
+
+Milestone 5
+
+Jul 5, 2025
+
+
+Saturday
+
+New Extended Deadline: 12th July, 2025
+
+Repeat the ML end-to-end process again with insights into the dataset.
+
+Last Submission
+
+20-July-2025
+
+
+Sunday
+
+Last submission for the project.
+
+
