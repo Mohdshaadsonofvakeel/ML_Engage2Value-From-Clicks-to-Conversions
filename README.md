@@ -295,7 +295,12 @@ I am actively seeking **research internship opportunities** in **Business Analyt
 - **Baseline Comparison**: Performance evaluated against multiple benchmarks
 - **Robustness Testing**: Model stability across different data splits
 - **Business Validation**: Results aligned with domain expertise and business logic
-
+---
+  
+![Device Type Analysis](./path_to_image/newplot (1).png)
+![Outlier Analysis](./path_to_image/newplot (2).png)
+![Missing Values by Feature](./path_to_image/newplot (3).png)
+![Purchase Value by Country](./path_to_image/newplot (4).png)
 ---
 
 **⭐ Star this repository if you found this analysis valuable for your research or business applications!**
