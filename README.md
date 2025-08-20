@@ -296,11 +296,17 @@ I am actively seeking **research internship opportunities** in **Business Analyt
 - **Robustness Testing**: Model stability across different data splits
 - **Business Validation**: Results aligned with domain expertise and business logic
 ---
-  
-![Device Type Analysis](./path_to_image/newplot (1).png)
-![Outlier Analysis](./path_to_image/newplot (2).png)
-![Missing Values by Feature](./path_to_image/newplot (3).png)
-![Purchase Value by Country](./path_to_image/newplot (4).png)
+### 📸 Visuals
+
+![Missing Value Percentage per Feature](https://github.com/Mohdshaadsonofvakeel/ML_Engage2Value-From-Clicks-to-Conversions/blob/main/DATA/newplot%20(1).png)
+![Target Variable Distribution](https://github.com/Mohdshaadsonofvakeel/ML_Engage2Value-From-Clicks-to-Conversions/blob/main/DATA/newplot%20(4).png)
+![Purchase vs Total Hits](https://github.com/Mohdshaadsonofvakeel/ML_Engage2Value-From-Clicks-to-Conversions/blob/main/DATA/newplot.png)
+![Device Type Analysis](https://github.com/Mohdshaadsonofvakeel/ML_Engage2Value-From-Clicks-to-Conversions/blob/main/DATA/newplot%20(1).png)
+![Outlier Analysis](https://github.com/Mohdshaadsonofvakeel/ML_Engage2Value-From-Clicks-to-Conversions/blob/main/DATA/newplot%20(2).png)
+![Missing Values by Feature](https://github.com/Mohdshaadsonofvakeel/ML_Engage2Value-From-Clicks-to-Conversions/blob/main/DATA/newplot%20(3).png)
+![Purchase Value by Country](https://github.com/Mohdshaadsonofvakeel/ML_Engage2Value-From-Clicks-to-Conversions/blob/main/DATA/newplot%20(4).png)
+
+
 ---
 
 **⭐ Star this repository if you found this analysis valuable for your research or business applications!**
