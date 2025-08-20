@@ -276,9 +276,9 @@ I am actively seeking **research internship opportunities** in **Business Analyt
 - ✅ **Deliver Publication-Quality Work**: Rigorous methodology suitable for academic publication
 
 **Contact Information**:
-- 📧 Email: [your.email@example.com](mailto:your.email@example.com)
-- 💼 LinkedIn: [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)  
-- 🐙 GitHub: [github.com/yourusername](https://github.com/yourusername)
+- 📧 Email: [your.email@example.com](mailto:23f3004148@ds.study.iitm.ac.in)
+- 💼 LinkedIn: [linkedin.com/in/yourprofile](https://linkedin.com/in/mohd-shad-112901254)  
+- 🐙 GitHub: [github.com/yourusername](https://github.com/Mohdshaadsonofvakeel)
 
 ---
 
